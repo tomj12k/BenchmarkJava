@@ -1,0 +1,145 @@
+# KNOWN_VULNS — ground-truth vulnerability catalog
+# Purpose: answer key for benchmarking Scantonomous scan findings against this app.
+# Diff scanner output vs. this file: a hit on a `vulnerable_source` path == true positive;
+# a hit on a `secure_source` path == false positive.
+#
+# Schema per entry (benchmark variant — carries case-count fields):
+#   id                    stable slug for this vuln class
+#   category              benchmark test category
+#   cwe                   primary CWE id(s)
+#   owasp                 OWASP Top 10 (2021) category
+#   true_positive_count   number of real-vulnerability cases in this category
+#   false_positive_count  number of safe/decoy cases in this category
+#   vulnerable_source     authoritative answer-key file / source dirs
+#   ground_truth_file     path to the shipped answer key
+#   notes                 context / caveats
+
+app: BenchmarkJava
+full_name: OWASP Benchmark (Java)
+upstream: https://github.com/OWASP-Benchmark/BenchmarkJava
+fork: https://github.com/tomj12k/BenchmarkJava
+language: Java
+scan_surface: [SAST-java, DAST-web]
+catalog_notes: >
+  OWASP Benchmark ships its own labeled answer key: expectedresults-1.2.csv at the
+  repo root. Each of the 2740 BenchmarkTestNNNNN test cases is labeled with its
+  category, a boolean "real vulnerability" flag (true = true positive / genuinely
+  exploitable, false = safe decoy for measuring false positives), and its CWE.
+  Per OWASP methodology this catalog is SUMMARIZED one entry per category rather
+  than one entry per test case. All true_positive_count / false_positive_count
+  values below were produced by parsing expectedresults-1.2.csv with awk
+  (group by category+cwe, count real==true vs real==false). Totals across all
+  categories: 1415 true positives + 1325 false positives = 2740 cases.
+  The CSV is the authoritative ground truth; the generated Java test cases live
+  under src/main/java/org/owasp/benchmark/testcode/ (file name == test name).
+
+vulns:
+  - id: benchmark-cmdi
+    category: cmdi
+    cwe: [CWE-78]
+    owasp: A03:2021-Injection
+    true_positive_count: 126
+    false_positive_count: 125
+    vulnerable_source: [src/main/java/org/owasp/benchmark/testcode/]
+    ground_truth_file: expectedresults-1.2.csv
+    notes: OS command injection. Counts from CSV (category=cmdi, cwe=78).
+
+  - id: benchmark-sqli
+    category: sqli
+    cwe: [CWE-89]
+    owasp: A03:2021-Injection
+    true_positive_count: 272
+    false_positive_count: 232
+    vulnerable_source: [src/main/java/org/owasp/benchmark/testcode/]
+    ground_truth_file: expectedresults-1.2.csv
+    notes: SQL injection — largest category. Counts from CSV (category=sqli, cwe=89).
+
+  - id: benchmark-xss
+    category: xss
+    cwe: [CWE-79]
+    owasp: A03:2021-Injection
+    true_positive_count: 246
+    false_positive_count: 209
+    vulnerable_source: [src/main/java/org/owasp/benchmark/testcode/]
+    ground_truth_file: expectedresults-1.2.csv
+    notes: Reflected cross-site scripting. Counts from CSV (category=xss, cwe=79).
+
+  - id: benchmark-pathtraver
+    category: pathtraver
+    cwe: [CWE-22]
+    owasp: A01:2021-Broken Access Control
+    true_positive_count: 133
+    false_positive_count: 135
+    vulnerable_source: [src/main/java/org/owasp/benchmark/testcode/]
+    ground_truth_file: expectedresults-1.2.csv
+    notes: Path traversal. Counts from CSV (category=pathtraver, cwe=22).
+
+  - id: benchmark-ldapi
+    category: ldapi
+    cwe: [CWE-90]
+    owasp: A03:2021-Injection
+    true_positive_count: 27
+    false_positive_count: 32
+    vulnerable_source: [src/main/java/org/owasp/benchmark/testcode/]
+    ground_truth_file: expectedresults-1.2.csv
+    notes: LDAP injection. Counts from CSV (category=ldapi, cwe=90).
+
+  - id: benchmark-xpathi
+    category: xpathi
+    cwe: [CWE-643]
+    owasp: A03:2021-Injection
+    true_positive_count: 15
+    false_positive_count: 20
+    vulnerable_source: [src/main/java/org/owasp/benchmark/testcode/]
+    ground_truth_file: expectedresults-1.2.csv
+    notes: XPath injection. Counts from CSV (category=xpathi, cwe=643).
+
+  - id: benchmark-crypto
+    category: crypto
+    cwe: [CWE-327]
+    owasp: A02:2021-Cryptographic Failures
+    true_positive_count: 130
+    false_positive_count: 116
+    vulnerable_source: [src/main/java/org/owasp/benchmark/testcode/]
+    ground_truth_file: expectedresults-1.2.csv
+    notes: Use of broken/risky cryptographic algorithm. Counts from CSV (category=crypto, cwe=327).
+
+  - id: benchmark-hash
+    category: hash
+    cwe: [CWE-328]
+    owasp: A02:2021-Cryptographic Failures
+    true_positive_count: 129
+    false_positive_count: 107
+    vulnerable_source: [src/main/java/org/owasp/benchmark/testcode/]
+    ground_truth_file: expectedresults-1.2.csv
+    notes: Weak hash. Counts from CSV (category=hash, cwe=328).
+
+  - id: benchmark-securecookie
+    category: securecookie
+    cwe: [CWE-614]
+    owasp: A05:2021-Security Misconfiguration
+    true_positive_count: 36
+    false_positive_count: 31
+    vulnerable_source: [src/main/java/org/owasp/benchmark/testcode/]
+    ground_truth_file: expectedresults-1.2.csv
+    notes: Cookie set without the Secure flag. Counts from CSV (category=securecookie, cwe=614).
+
+  - id: benchmark-trustbound
+    category: trustbound
+    cwe: [CWE-501]
+    owasp: A04:2021-Insecure Design
+    true_positive_count: 83
+    false_positive_count: 43
+    vulnerable_source: [src/main/java/org/owasp/benchmark/testcode/]
+    ground_truth_file: expectedresults-1.2.csv
+    notes: Trust boundary violation. Counts from CSV (category=trustbound, cwe=501).
+
+  - id: benchmark-weakrand
+    category: weakrand
+    cwe: [CWE-330]
+    owasp: A02:2021-Cryptographic Failures
+    true_positive_count: 218
+    false_positive_count: 275
+    vulnerable_source: [src/main/java/org/owasp/benchmark/testcode/]
+    ground_truth_file: expectedresults-1.2.csv
+    notes: Use of insufficiently random values. Counts from CSV (category=weakrand, cwe=330).
